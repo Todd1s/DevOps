@@ -1,0 +1,12 @@
+FROM nginx
+
+WORKDIR /etc/nginx/
+
+COPY ./server/server.c .
+COPY ./nginx/nginx.conf .
+
+RUN apt-get update
+RUN apt-get install -y gcc spawn-fcgi libfcgi-dev
+RUN gcc server.c -lfcgi -o server
+
+CMD spawn-fcgi -p 8080 server && nginx -g "daemon off;"
